@@ -23,7 +23,11 @@ const schema = makeExecutableSchema({
 
 const graphqlEndpoint = '/graphql';
 
-const server = new ApolloServer({ schema });
+const server = new ApolloServer({
+  schema,
+  context: { models },
+});
+
 server.applyMiddleware({
   app,
   gui: {
