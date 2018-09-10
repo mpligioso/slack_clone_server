@@ -10,11 +10,10 @@ export default gql`
 
   type Query {
     getUser(id: Int!): User!
-    allUsers(id: Int!): [User!]!
+    allUsers: [User!]!
   }
 
   type Mutation {
     createUser(username: String!, email: String!, password: String!): User!
   }
 `;
-

@@ -25,7 +25,12 @@ const graphqlEndpoint = '/graphql';
 
 const server = new ApolloServer({
   schema,
-  context: { models },
+  context: {
+    models,
+    user: {
+      id: 1,
+    },
+  },
 });
 
 server.applyMiddleware({
@@ -36,7 +41,7 @@ server.applyMiddleware({
 });
 
 // create or sync models with db
-models.sequelize.sync({ force: true })
+models.sequelize.sync()
   .then(() => {
     app.listen({ port: PORT }, () => console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`));
   });
