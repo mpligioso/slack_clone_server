@@ -1,8 +1,13 @@
 import Sequelize from 'sequelize';
 import {} from 'dotenv/config';
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS,
-  { dialect: 'postgres' });
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
+  dialect: 'postgres',
+  // to change camelCase to snake_case
+  define: {
+    underscored: true,
+  },
+});
 
 const models = {
   User: sequelize.import('./user.js'),

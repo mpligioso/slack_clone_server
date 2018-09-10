@@ -1,32 +1,29 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import bodyParser from 'body-parser';
-import { ApolloServer, gql } from 'apollo-server-express';
-import { makeExecutableSchema } from 'graphql-tools';
+import path from 'path';
+import { ApolloServer, gql, makeExecutableSchema } from 'apollo-server-express';
+import { fileLoader, mergeTypes, mergeResolvers } from 'merge-graphql-schemas';
 
 import models from './models';
 
 dotenv.config();
 
+// Merging all typeDefs and resolver files respectively for scalability
+const typeDefs = mergeTypes(fileLoader(path.join(__dirname, './types')));
+const resolvers = mergeResolvers(fileLoader(path.join(__dirname, './resolvers')));
+
 const PORT = 4000;
 
 const app = express();
 
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: () => 'Hello world!',
-  },
-};
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers,
+});
 
 const graphqlEndpoint = '/graphql';
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({ schema });
 server.applyMiddleware({
   app,
   gui: {
@@ -35,9 +32,7 @@ server.applyMiddleware({
 });
 
 // create or sync models with db
-models.sequelize.sync()
+models.sequelize.sync({ force: true })
   .then(() => {
-    app.listen({ port: PORT }, () =>
-      console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-    );
+    app.listen({ port: PORT }, () => console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`));
   });
