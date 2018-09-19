@@ -16,6 +16,8 @@ const resolvers = mergeResolvers(fileLoader(path.join(__dirname, './resolvers'))
 const PORT = 4000;
 
 const app = express();
+const SECRET = process.env.secret;
+const SECRET2 = process.env.secret2;
 
 app.use(cors('*'));
 
@@ -33,6 +35,8 @@ const server = new ApolloServer({
     user: {
       id: 1,
     },
+    SECRET,
+    SECRET2,
   },
 });
 
